@@ -5,17 +5,32 @@ type ShortenUrlFormProps = {
   requestShortUrl: (original: string) => Promise<void>;
 };
 
+// eslint-disable-next-line no-useless-escape
+const isValidUrl = (urlString: string) => {
+    const urlPattern = new RegExp('^(https?:\\/\\/)?'+ // validate protocol
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // validate domain name
+  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // validate OR ip (v4) address
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // validate port and path
+  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // validate query string
+  '(\\#[-a-z\\d_]*)?$','i'); // validate fragment locator
+return !!urlPattern.test(urlString);
+}
+
 export const ShortenUrlForm: React.FC<ShortenUrlFormProps> = ({
   requestShortUrl,
 }) => {
   const [inputUrl, setInputUrl] = useState<string>('');
   const onSubmit = useCallback(
     async (event: FormEvent) => {
-      event.preventDefault();
-      await requestShortUrl(inputUrl);
-      setInputUrl('');
+        if (isValidUrl(inputUrl)) {
+            event.preventDefault();
+            await requestShortUrl(inputUrl);
+            setInputUrl('');
+        } else {
+            event.preventDefault();
+        }
     },
-    [inputUrl, setInputUrl]
+    [inputUrl, requestShortUrl]
   );
   return (
     <form onSubmit={onSubmit}>

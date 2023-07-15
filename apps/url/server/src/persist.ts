@@ -16,7 +16,7 @@ async function getDB() {
     });
     _db = conn;
     await _db.run(
-      'CREATE TABLE IF NOT EXISTS url (id INTEGER PRIMARY KEY AUTOINCREMENT, original TEXT);'
+      'CREATE TABLE IF NOT EXISTS url (id INTEGER PRIMARY KEY AUTOINCREMENT, original TEXT, count INTEGER);'
     );
   }
   return _db;
@@ -31,7 +31,7 @@ async function getDB() {
 export async function shortenUrl(url: string): Promise<string> {
   const db = await getDB();
 
-  const result = await db.run('INSERT INTO url (original) VALUES (?)', url);
+  const result = await db.run('INSERT INTO url (original, count) VALUES (?, 0)', url);
   console.log(result);
   const id = result.lastID;
   const short = `http://localhost:3333/s/${id}`;
@@ -46,6 +46,22 @@ export async function lookupUrl(shortenedId: number) {
     'SELECT original FROM url WHERE id = (?)',
     shortenedId
   );
+
+  await db.run(
+    'UPDATE url SET count = count + 1 WHERE id = (?)', 
+    shortenedId
+  );
+  
   console.log(result);
   return result.original;
+}
+
+export async function getUrlVisitCount(shortenedId: number) {
+  const db = await getDB();
+  const result = await db.get(
+    'SELECT count FROM url WHERE id = (?)',
+    shortenedId
+  );
+  console.log(result);
+  return result;
 }

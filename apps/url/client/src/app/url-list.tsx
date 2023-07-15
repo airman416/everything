@@ -1,5 +1,6 @@
 import { Link, ListItem, UnorderedList } from '@chakra-ui/react';
 import { Shortened } from './types';
+import QRCode from "react-qr-code";
 
 type UrlListProps = {
   urls: Array<Shortened>;
@@ -14,6 +15,7 @@ export const UrlList: React.FC<UrlListProps> = ({ urls }) => {
             {u.short}
           </Link>{' '}
           - {u.original}
+          <QRCode value={u.short} />
         </ListItem>
       ))}
     </UnorderedList>

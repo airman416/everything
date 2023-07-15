@@ -1,4 +1,4 @@
-import { Container, UnorderedList, ListItem, Link, Text } from "@chakra-ui/react";
+import { Container, Text } from "@chakra-ui/react";
 import { useState, useCallback } from "react";
 import axios from "axios";
 import ShortenUrlForm from "./ShorternUrlForm";
@@ -23,10 +23,10 @@ export function App() {
 
   return (
     <Container maxWidth="4xl" marginBlock={10} textAlign="center">
-    <Text fontSize="4xl">My URL Shortener</Text>
-    <ShortenUrlForm requestShortUrl={requestShortUrl} />
-    <UrlList urls={urls} />
-  </Container>
+      <Text fontSize="4xl">My URL Shortener</Text>
+      <ShortenUrlForm requestShortUrl={requestShortUrl} />
+      <UrlList urls={urls} />
+    </Container>
   );
 }
 
